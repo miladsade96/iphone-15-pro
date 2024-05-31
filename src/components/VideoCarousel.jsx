@@ -67,7 +67,16 @@ export default function VideoCarousel() {
             backgroundColor: "white",
           });
         },
-        onComplete: () => {},
+        onComplete: () => {
+          if (isPlaying) {
+            gsap.to(videoDevRef.current[videoId], {
+              width: "12px",
+            });
+            gsap.to(span[videoId], {
+              backgroundColor: "afafaf",
+            });
+          }
+        },
       });
     }
   }, [videoId, startPlay]);
