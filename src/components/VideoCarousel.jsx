@@ -2,6 +2,7 @@ import { hightlightsSlides } from "../constants/index.js";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { pauseImg, playImg, replayImg } from "../utils/index.js";
+import { useGSAP } from "@gsap/react";
 
 export default function VideoCarousel() {
   const videoRef = useRef([]);
@@ -17,8 +18,23 @@ export default function VideoCarousel() {
   });
 
   const { isEnd, startPlay, videoId, isLastVideo, isPlaying } = video;
-
   const [loadedData, setLoadedData] = useState([]);
+
+  useGSAP(() => {
+    gsap.to("#video", {
+      scrollTrigger: {
+        trigger: "#video",
+        toggleActions: "restart none none none",
+      },
+      onComplete: () => {
+        setVideo((prevState) => ({
+          ...prevState,
+          isPlaying: true,
+          startPlay: true,
+        }));
+      },
+    });
+  }, [isEnd, videoId]);
 
   useEffect(() => {
     if (loadedData.length > 3) {
@@ -41,7 +57,39 @@ export default function VideoCarousel() {
     }
   }, [videoId, startPlay]);
 
-  function handleProcess(action) {}
+  function handleLoadedMetadata(i, e) {
+    setLoadedData((prevState) => [...prevState, e]);
+  }
+
+  function handleProcess(type, i) {
+    switch (type) {
+      case "video-end":
+        setVideo((prevState) => ({
+          ...prevState,
+          isEnd: true,
+          videoId: i + 1,
+        }));
+        break;
+      case "last-video":
+        setVideo((prevState) => ({ ...prevState, isLastVideo: true }));
+        break;
+      case "video-reset":
+        setVideo((prevState) => ({
+          ...prevState,
+          isLastVideo: false,
+          videoId: 0,
+        }));
+        break;
+      case "play":
+        setVideo((prevState) => ({
+          ...prevState,
+          isPlaying: !prevState.isPlaying,
+        }));
+        break;
+      default:
+        return video;
+    }
+  }
 
   return (
     <>
@@ -64,6 +112,7 @@ export default function VideoCarousel() {
                       isPlaying: true,
                     }));
                   }}
+                  onLoadedMetadata={(event) => handleLoadedMetadata(i, event)}
                 >
                   <source src={item.video} type="video/mp4" />
                 </video>
