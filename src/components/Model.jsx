@@ -1,8 +1,9 @@
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ModelView from "./ModelView.jsx";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { yellowImg } from "../utils/index.js";
+import * as THREE from "three";
 
 export default function Model() {
   const [size, setSize] = useState("small");
@@ -11,6 +12,18 @@ export default function Model() {
     color: ["#8f8a81", "#ffe7b9", "#6f6c64"],
     img: yellowImg,
   });
+
+  // Camera control:
+  const cameraControlSmall = useRef();
+  const cameraControlLarge = useRef();
+
+  // Models:
+  const small = useRef(new THREE.Group());
+  const large = useRef(new THREE.Group());
+
+  // Rotation:
+  const [smallRotation, setSmallRotation] = useState(0);
+  const [largeRotation, setLargeRotation] = useState(0);
 
   useGSAP(() => {
     gsap.to("#heading", { y: 0, opacity: 1 });
