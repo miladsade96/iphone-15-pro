@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { hightlightsSlides } from "../constants";
 import { pauseImg, playImg, replayImg } from "../utils";
 
-const VideoCarousel = () => {
+export default function VideoCarousel() {
   const videoRef = useRef([]);
   const videoSpanRef = useRef([]);
   const videoDivRef = useRef([]);
@@ -93,7 +93,7 @@ const VideoCarousel = () => {
         },
       });
 
-      if (videoId == 0) {
+      if (videoId === 0) {
         anim.restart();
       }
 
@@ -113,7 +113,7 @@ const VideoCarousel = () => {
         gsap.ticker.remove(animUpdate);
       }
     }
-  }, [videoId, startPlay]);
+  }, [isPlaying, videoId, startPlay]);
 
   useEffect(() => {
     if (loadedData.length > 3) {
@@ -126,7 +126,7 @@ const VideoCarousel = () => {
   }, [startPlay, videoId, isPlaying, loadedData]);
 
   // vd id is the id for every video until id becomes number 3
-  const handleProcess = (type, i) => {
+  function handleProcess(type, i) {
     switch (type) {
       case "video-end":
         setVideo((pre) => ({ ...pre, isEnd: true, videoId: i + 1 }));
@@ -151,9 +151,11 @@ const VideoCarousel = () => {
       default:
         return video;
     }
-  };
+  }
 
-  const handleLoadedMetaData = (i, e) => setLoadedData((pre) => [...pre, e]);
+  function handleLoadedMetaData(i, e) {
+    return setLoadedData((pre) => [...pre, e]);
+  }
 
   return (
     <>
@@ -229,6 +231,4 @@ const VideoCarousel = () => {
       </div>
     </>
   );
-};
-
-export default VideoCarousel;
+}
