@@ -1,6 +1,12 @@
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import ModelView from "./ModelView.jsx";
 export default function Model() {
   return <h1>Model</h1>;
+  useGSAP(() => {
+    gsap.to("#heading", { y: 0, opacity: 1 });
+  }, []);
+
   return (
     <section className="common-padding">
       <div className="screen-max-width">
